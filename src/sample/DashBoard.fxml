@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="468.0" prefWidth="718.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.DashBoard">
+   <children>
+      <StackPane layoutX="170.0" layoutY="234.0" prefHeight="60.0" prefWidth="549.0">
+         <children>
+            <Pane fx:id="panel_deconnecter" prefHeight="200.0" prefWidth="200.0">
+               <children>
+                  <Label layoutX="220.0" layoutY="10.0" text="Message" textFill="#292828">
+                     <font>
+                        <Font size="28.0" />
+                     </font>
+                  </Label>
+               </children>
+            </Pane>
+            <Pane fx:id="panel_option" prefHeight="200.0" prefWidth="200.0">
+               <children>
+                  <Label layoutX="231.0" layoutY="10.0" text="Option" textFill="#231e1e">
+                     <font>
+                        <Font size="28.0" />
+                     </font>
+                  </Label>
+               </children>
+            </Pane>
+         </children>
+      </StackPane>
+      <VBox prefHeight="400.0" prefWidth="170.0" style="-fx-background-color: #1009A0;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <Pane prefHeight="152.0" prefWidth="170.0">
+               <children>
+                  <Label fx:id="labelNom" layoutX="30.0" layoutY="55.0" text="Callonico Florian" textFill="WHITE">
+                     <font>
+                        <Font size="15.0" />
+                     </font>
+                  </Label>
+               </children>
+            </Pane>
+            <Button fx:id="btn_projet" mnemonicParsing="false" onAction="#handle" prefHeight="49.0" prefWidth="180.0" style="-fx-background-color: #1009A0;" text="Projet en cours" textFill="WHITE" />
+            <Button fx:id="btn_message" mnemonicParsing="false" onAction="#handle" prefHeight="49.0" prefWidth="180.0" style="-fx-background-color: #1009A0;" text="Message" textFill="WHITE" />
+            <Button fx:id="btn_option" mnemonicParsing="false" onAction="#handle" prefHeight="49.0" prefWidth="180.0" style="-fx-background-color: #1009A0;" text="Options" textFill="WHITE" />
+            <Button fx:id="bnt_deconnecter" mnemonicParsing="false" onAction="#handle" prefHeight="49.0" prefWidth="180.0" style="-fx-background-color: #1009A0;" text="Se deconnecter" textFill="WHITE" />
+         </children>
+      </VBox>
+      <Pane fx:id="panelAffichage" layoutX="170.0" layoutY="63.0" prefHeight="79.0" prefWidth="549.0" style="-fx-background-color: #2BB3C6;">
+         <children>
+            <Label fx:id="labelAffichage" layoutX="166.0" layoutY="20.0" prefHeight="36.0" prefWidth="217.0" text="Projet en cours">
+               <font>
+                  <Font size="27.0" />
+               </font>
+            </Label>
+         </children></Pane>
+      <Button fx:id="btn_document" layoutX="200.0" layoutY="327.0" mnemonicParsing="false" onAction="#choosedoc" text="Choisir document" />
+      <ListView fx:id="lstV_doc" layoutX="317.0" layoutY="304.0" prefHeight="127.0" prefWidth="127.0" />
+   </children>
+</AnchorPane>
