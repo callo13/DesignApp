@@ -1,6 +1,8 @@
 package sample;
 
+import com.sun.javafx.stage.EmbeddedWindow;
 import com.sun.jna.platform.FileUtils;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -11,15 +13,14 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.Pane;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-
+import javafx.embed.swing.SwingFXUtils;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.entity.mime.ContentBody;
 import org.apache.hc.client5.http.entity.mime.FileBody;
@@ -36,6 +37,7 @@ import org.json.JSONObject;
 
 import javax.swing.text.html.parser.Entity;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.io.*;
 import java.net.*;
@@ -97,40 +99,17 @@ public class DashBoard implements Initializable {
         /*if (Desktop.isDesktopSupported()) {
             Desktop.getDesktop().open(new File("D:\\Documents\\Bureau\\valeur-stock-AGs.xlsm"));
         }*/
-        byte[] fileContent = Files.readAllBytes(selecFile.toPath());
+
+
+
+
+
+
+
+
+
+                byte[] fileContent = Files.readAllBytes(selecFile.toPath());
         String data = Base64.getEncoder().encodeToString(fileContent);
-        //System.out.println();
-        /*recuperer_fichier();
-        String yo = Data.nom;
-        byte[] decoded = Base64.getDecoder().decode(yo);
-        System.out.println(Data.nom);*/
-        //byte[] b =yo.getBytes();
-        //System.out.println(b);
-        /*byte[] fileContent = Files.readAllBytes(selecFile.toPath());
-        String str = new String(fileContent);
-        System.out.println(str);*/
-        /*
-        FileInputStream is = new FileInputStream(selecFile);
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-
-        int nRead;
-        byte[] data = new byte[16384];
-
-        while ((nRead = is.read(data, 0, data.length)) != -1) {
-            buffer.write(data, 0, nRead);
-        }
-
-        System.out.println("buffer\n"+buffer.toByteArray());
-        String sttr= new String(buffer.toByteArray());
-        System.out.println("Contenu\n"+sttr);
-        String str = new String(byteArray);
-       /* Blob blob = "";
-        byte [] bytes = blob.getBytes(1l, (int)bl  ob.length());
-        for(int i=0; i<bytes.length;i++) {
-            System.out.println(Arrays.toString(bytes));
-        }*/
-
-
         JSONObject json = new JSONObject();
         json.put("data", data);
         json.put("docName", selecFile.getName());
@@ -146,7 +125,53 @@ public class DashBoard implements Initializable {
             // handle exception here
         }
     }
+    @FXML
+    public void envoyer_doc() {
+        
+        Runnable fetchIcon = () -> {
+            File file = null;
+            try {
+                file = File.createTempFile("icon", ".png");
 
+                // commented code always returns the same icon on OS X...
+                // FileSystemView view = FileSystemView.getFileSystemView();
+                // javax.swing.Icon icon = view.getSystemIcon(file);
+
+                // following code returns different icons for different types on OS X...
+                final javax.swing.JFileChooser fc = new javax.swing.JFileChooser();
+                javax.swing.Icon icon = fc.getUI().getFileView(fc).getIcon(file);
+
+                BufferedImage bufferedImage = new BufferedImage(
+                        icon.getIconWidth(),
+                        icon.getIconHeight(),
+                        BufferedImage.TYPE_INT_ARGB
+                );
+                icon.paintIcon(null, bufferedImage.getGraphics(), 0, 0);
+
+                Platform.runLater(() -> {
+                    WritableImage fxImage = SwingFXUtils.toFXImage(
+                            bufferedImage, null
+                    );
+                    ImageView imageView = new ImageView(fxImage);
+                    Stage stage = null;
+                    stage.setScene(
+                            new Scene(
+                                    new StackPane(imageView),
+                                    200, 200
+                            )
+                    );
+                    stage.show();
+                });
+            } catch (IOException e) {
+                e.printStackTrace();
+                Platform.exit();
+            } finally {
+                if (file != null) {
+                    file.delete();
+                }
+            }
+        };
+    }
 
     @FXML
     public void telecharger_document(ActionEvent event) throws IOException {
