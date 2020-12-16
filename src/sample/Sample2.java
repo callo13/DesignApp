@@ -100,7 +100,7 @@ public class Sample2 implements Initializable {
         }*/
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         try {
-            HttpPost request = new HttpPost("http://localhost:8080/addUser");
+            HttpPost request = new HttpPost("http://localhost:8082/addUser");
             StringEntity params = new StringEntity(json.toString());
             request.addHeader("content-type", "application/json");
             request.setEntity(params);
@@ -116,7 +116,7 @@ public class Sample2 implements Initializable {
     @FXML
     void Connecter(ActionEvent event) throws IOException {
         String mail = emailC.getText();
-        String url = "http://localhost:8080/getUserbymail?mail="+ mail;
+        String url = "http://localhost:8082/getUserbymail?mail="+ mail;
         URL obj = new URL(url);
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
         // optional default is GET
@@ -150,7 +150,7 @@ public class Sample2 implements Initializable {
             fxmlLoader.setLocation(getClass().getResource("Dashboard.fxml"));
             Scene scene = new Scene(fxmlLoader.load());
             Stage stage = new Stage();
-            stage.setTitle("Deuxième Windows");
+            stage.setTitle("Pilotage Projet");
             stage.setScene(scene);
             stage.show();
         }
