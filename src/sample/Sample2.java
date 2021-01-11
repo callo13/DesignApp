@@ -168,6 +168,7 @@ public class Sample2 implements Initializable {
     private void init_combobox(){
         ObservableList<String> list = FXCollections.observableArrayList();
         ListeMetier.getItems().addAll("Wpm", "Technicien-methode", "Ordonnanceur");
+
     }
     private void reset_field(){
         password.setText("");

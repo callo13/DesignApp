@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
@@ -61,8 +64,8 @@
                </font>
             </Label>
          </children></Pane>
-      <Button fx:id="btn_document" layoutX="200.0" layoutY="327.0" mnemonicParsing="false" onAction="#choosedoc" text="Choisir document" />
-      <ListView fx:id="lstV_doc" layoutX="317.0" layoutY="304.0" prefHeight="127.0" prefWidth="127.0" />
+      <Button fx:id="btn_document" layoutX="262.0" layoutY="26.0" mnemonicParsing="false" onAction="#choosedoc" text="Choisir document" />
+      <ListView fx:id="lstV_doc" layoutX="381.0" layoutY="26.0" prefHeight="25.0" prefWidth="127.0" />
       <MenuBar layoutX="579.0" layoutY="1.0">
         <menus>
           <Menu mnemonicParsing="false" text="File">
@@ -82,7 +85,21 @@
           </Menu>
         </menus>
       </MenuBar>
-      <Button fx:id="recup_doc" layoutX="544.0" layoutY="315.0" mnemonicParsing="false" onAction="#telecharger_document" prefHeight="25.0" prefWidth="109.0" text="Telecharger doc" />
-      <Button layoutX="246.0" layoutY="174.0" mnemonicParsing="false" onAction="#envoyer_doc" text="Button" />
+      <Button fx:id="recup_doc" layoutX="508.0" layoutY="26.0" mnemonicParsing="false" onAction="#telecharger_document" prefHeight="25.0" prefWidth="109.0" text="Telecharger doc" />
+      <Button layoutX="200.0" layoutY="26.0" mnemonicParsing="false" onAction="#envoyer_doc" text="Button" />
+      <TableView fx:id="table" layoutX="170.0" layoutY="141.0" prefHeight="327.0" prefWidth="549.0">
+        <columns>
+          <TableColumn fx:id="col_date_creation" text="Date création" />
+          <TableColumn fx:id="col_produit" prefWidth="70.0" text="Produit" />
+            <TableColumn fx:id="col_wpm" prefWidth="50.6666259765625" text="WPM" />
+            <TableColumn fx:id="col_ci" prefWidth="61.33331298828125" text="N°CI" />
+            <TableColumn fx:id="col_methode" prefWidth="71.33331298828125" text="Methode" />
+            <TableColumn fx:id="col_fc" prefWidth="70.66665649414062" text="N°FC" />
+            <TableColumn fx:id="col_plannif" prefWidth="62.6666259765625" text="Plannif" />
+            <TableColumn fx:id="col_debut" minWidth="0.0" prefWidth="44.66668701171875" text="Début" />
+            <TableColumn prefWidth="72.66668701171875" text="Fin" />
+        </columns>
+      </TableView>
+      <DatePicker />
    </children>
 </AnchorPane>

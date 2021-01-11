@@ -3,18 +3,23 @@ package sample;
 import com.sun.javafx.stage.EmbeddedWindow;
 import com.sun.jna.platform.FileUtils;
 import javafx.application.Platform;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
+import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
@@ -33,6 +38,7 @@ import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.swing.text.html.parser.Entity;
@@ -49,8 +55,11 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.sql.Blob;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.Date;
 import java.util.ResourceBundle;
 
 public class DashBoard implements Initializable {
@@ -75,21 +84,53 @@ public class DashBoard implements Initializable {
     @FXML
     private Pane panel_projet;
     @FXML
-    private Label labelAffichage,labelNom;
+    private Label labelAffichage, labelNom;
+    @FXML
+    private TableView<Tableau> table;
+    @FXML
+    private TableColumn<Tableau, String> col_date_creation;
+    @FXML
+    private TableColumn<Tableau, String> col_produit;
+    @FXML
+    private TableColumn<Tableau, String> col_wpm;
+    @FXML
+    private TableColumn<Tableau, String> col_ci;
+    @FXML
+    private TableColumn<Tableau, String> col_methode;
+    @FXML
+    private TableColumn<Tableau, String> col_fc;
+    @FXML
+    private TableColumn<Tableau, String> col_plannif;
+    @FXML
+    private TableColumn<Tableau, String> col_debut;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         panel_deconnecter.setVisible(false);
         panel_option.setVisible(false);
         Affichage_nom();
-    }
+        try {
+            charger_tableau();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
+
+    }
+    @FXML
+    public void exitApplication(ActionEvent event) {
+        Platform.exit();
+        System.out.println("Response Code : ");
+
+    }
     @FXML
     public void choosedoc(ActionEvent event) throws IOException, SQLException {
         //sendPost();
         FileChooser fc = new FileChooser();
         Stage stage = null;
-        File selecFile =fc.showOpenDialog(null);
+        File selecFile = fc.showOpenDialog(null);
         if (selecFile != null) {
             lstV_doc.getItems().add(selecFile.getName());
         }
@@ -99,16 +140,7 @@ public class DashBoard implements Initializable {
         /*if (Desktop.isDesktopSupported()) {
             Desktop.getDesktop().open(new File("D:\\Documents\\Bureau\\valeur-stock-AGs.xlsm"));
         }*/
-
-
-
-
-
-
-
-
-
-                byte[] fileContent = Files.readAllBytes(selecFile.toPath());
+        byte[] fileContent = Files.readAllBytes(selecFile.toPath());
         String data = Base64.getEncoder().encodeToString(fileContent);
         JSONObject json = new JSONObject();
         json.put("data", data);
@@ -125,53 +157,153 @@ public class DashBoard implements Initializable {
             // handle exception here
         }
     }
-    @FXML
-    public void envoyer_doc() {
-        
-        Runnable fetchIcon = () -> {
-            File file = null;
-            try {
-                file = File.createTempFile("icon", ".png");
+    public void charger_tableau() throws IOException, ParseException{
+        String url = "http://localhost:8081/getRows";
+        URL obj = new URL(url);
+        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+        // optional default is GET
+        con.setRequestMethod("GET");
+        //add request header
+        con.setRequestProperty("User-Agent", "Mozilla/5.0");
+        int responseCode = 0;
+        System.out.println("\nSending 'GET' request to URL : " + url);
+        System.out.println("Response Code : " + responseCode);
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(con.getInputStream()));
+        String inputLine;
+        StringBuilder response = new StringBuilder();
+        while ((inputLine = in.readLine()) != null) {
+            response.append(inputLine);
+        }
+        in.close();
+        //print in String
+        String re;
+        re = response.toString();
+        //String yo =" {\"user\":" + re + "}";
+        //re = response.toString().substring(1);
+        //re = re.substring(0, re.length() - 1);
+        //System.out.println(re);
+        JSONArray jsonArray = new JSONArray(re);
+        ObservableList<Tableau> tableau = FXCollections.observableArrayList();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObject1 = jsonArray.getJSONObject(i);
+            String value1 = jsonObject1.optString("date_creation");
+            String value2 = jsonObject1.optString("dispo");
+            String value3 = jsonObject1.optString("mail");
+            String value4 = jsonObject1.optString("password");
+            //Date date1=new SimpleDateFormat("dd/MM/yyyy").parse(value1);
 
-                // commented code always returns the same icon on OS X...
-                // FileSystemView view = FileSystemView.getFileSystemView();
-                // javax.swing.Icon icon = view.getSystemIcon(file);
+            tableau.add(new Tableau(value1,value2, value3, value4));
+            //System.out.println(value1 + value2);
+        }
+        col_produit.setCellValueFactory(new PropertyValueFactory<>("produit"));
+        col_wpm.setCellValueFactory(new PropertyValueFactory<>("wpm"));
+        col_ci.setCellValueFactory(new PropertyValueFactory<>("ci"));
+        col_date_creation.setCellValueFactory(new PropertyValueFactory<>("date_creation"));
+        col_fc.setVisible(false);
+        table.setItems(tableau);
+        table.setEditable(true);
 
-                // following code returns different icons for different types on OS X...
-                final javax.swing.JFileChooser fc = new javax.swing.JFileChooser();
-                javax.swing.Icon icon = fc.getUI().getFileView(fc).getIcon(file);
+        col_ci.setCellFactory(TextFieldTableCell.forTableColumn());
+        col_ci.setOnEditCommit(e->{
+            e.getTableView().getItems().get(e.getTablePosition().getRow()).setCi(e.getNewValue());
+        });
+        col_date_creation.setCellFactory(TextFieldTableCell.forTableColumn());
+        col_date_creation.setOnEditCommit(e->{
+            e.getTableView().getItems().get(e.getTablePosition().getRow()).setCi(e.getNewValue());
+        });
+        col_produit.setCellFactory(TextFieldTableCell.forTableColumn());
+        col_produit.setOnEditCommit(e->{
+            e.getTableView().getItems().get(e.getTablePosition().getRow()).setProduit(e.getNewValue());
+        });
+        col_wpm.setCellFactory(TextFieldTableCell.forTableColumn());
+        col_wpm.setOnEditCommit(e->{
+            e.getTableView().getItems().get(e.getTablePosition().getRow()).setCi(e.getNewValue());
+        });
+        /*table.setRowFactory(tv -> {
+            TableRow<Tableau> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (! row.isEmpty() && event.getButton()== MouseButton.PRIMARY
+                        && event.getClickCount() == 2) {
 
-                BufferedImage bufferedImage = new BufferedImage(
-                        icon.getIconWidth(),
-                        icon.getIconHeight(),
-                        BufferedImage.TYPE_INT_ARGB
-                );
-                icon.paintIcon(null, bufferedImage.getGraphics(), 0, 0);
-
-                Platform.runLater(() -> {
-                    WritableImage fxImage = SwingFXUtils.toFXImage(
-                            bufferedImage, null
-                    );
-                    ImageView imageView = new ImageView(fxImage);
-                    Stage stage = null;
-                    stage.setScene(
-                            new Scene(
-                                    new StackPane(imageView),
-                                    200, 200
-                            )
-                    );
-                    stage.show();
-                });
-            } catch (IOException e) {
-                e.printStackTrace();
-                Platform.exit();
-            } finally {
-                if (file != null) {
-                    file.delete();
+                    Tableau clickedRow = row.getItem();
+                    System.out.println(row);
                 }
+            });
+            return row ;
+        });*/
+        Object object =  table.getSelectionModel().selectedItemProperty().get();
+        int index = table.getSelectionModel().selectedIndexProperty().get();
+        table.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends Tableau> observable, Tableau oldValue, Tableau newValue) -> {
+            System.out.println(table.getSelectionModel().getSelectedIndex());
+
+        });
+        /*table.getSelectionModel().selectedItemProperty().addListener((observableValue, oldValue, newValue) -> {
+            if (newValue != null) {
+
+                System.out.println("Selected Person: "
+                        + newValue.getProduit()+ " | "
+                        + " " + newValue.getDate_creation()
+
             }
-        };
+        });*/
     }
+    @FXML
+    public void envoyer_doc() throws IOException, ParseException {
+        String url = "http://localhost:8081/getRows";
+        URL obj = new URL(url);
+        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+        // optional default is GET
+        con.setRequestMethod("GET");
+        //add request header
+        con.setRequestProperty("User-Agent", "Mozilla/5.0");
+        int responseCode = 0;
+        System.out.println("\nSending 'GET' request to URL : " + url);
+        System.out.println("Response Code : " + responseCode);
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(con.getInputStream()));
+        String inputLine;
+        StringBuilder response = new StringBuilder();
+        while ((inputLine = in.readLine()) != null) {
+            response.append(inputLine);
+        }
+        in.close();
+        //print in String
+        String re;
+        re = response.toString();
+        //String yo =" {\"user\":" + re + "}";
+        //re = response.toString().substring(1);
+        //re = re.substring(0, re.length() - 1);
+        System.out.println(re);
+        JSONArray jsonArray = new JSONArray(re);
+        ObservableList<Tableau> tableau = FXCollections.observableArrayList();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObject1 = jsonArray.getJSONObject(i);
+
+            String value1 = jsonObject1.optString("date_creation");
+            String value2 = jsonObject1.optString("dispo");
+            String value3 = jsonObject1.optString("mail");
+            String value4 = jsonObject1.optString("password");
+            //Date date1=new SimpleDateFormat("dd/MM/yyyy").parse(value1);
+            //System.out.println(date1);
+            tableau.add(new Tableau(value1,value2, value3, value4));
+            System.out.println(value1 + value2);
+        }
+        col_produit.setCellValueFactory(new PropertyValueFactory<>("produit"));
+        col_wpm.setCellValueFactory(new PropertyValueFactory<>("wpm"));
+        col_ci.setCellValueFactory(new PropertyValueFactory<>("ci"));
+        col_date_creation.setCellValueFactory(new PropertyValueFactory<>("date_creation"));
+        col_fc.setVisible(false);
+        table.setItems(tableau);
+        table.setEditable(true);
+
+        col_ci.setCellFactory(TextFieldTableCell.forTableColumn());
+        col_ci.setOnEditCommit(e->{
+            e.getTableView().getItems().get(e.getTablePosition().getRow()).setCi(e.getNewValue());
+        });
+
+    }
+
 
     @FXML
     public void telecharger_document(ActionEvent event) throws IOException {
@@ -293,4 +425,6 @@ public class DashBoard implements Initializable {
         //System.out.println("mail = " + myResponse.getString("mail"));
         //System.out.println("password = " + myResponse.getString("password"));
     }
+
+
 }
