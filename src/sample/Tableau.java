@@ -3,14 +3,50 @@ package sample;
 import java.util.Date;
 
 public class Tableau {
+    Integer id;
     String date_creation;
-    String produit,wpm,ci,methode,FC,plannif;
+    String produit,wpm,ci,methode,plannif,debut,fin;
 
-    public Tableau(String date_creation,String produit, String wpm, String ci) {
+    public String getFin() {
+        return fin;
+    }
+
+    public void setFin(String fin) {
+        this.fin = fin;
+    }
+    public Tableau(){}
+    public Tableau(String date_creation, String ci, String methode) {
+        this.date_creation = date_creation;
+        this.ci = ci;
+        this.methode = methode;
+    }
+
+    public Tableau(String date_creation, String produit, String wpm, String ci, String methode, String plannif, String debut, String fin,Integer id ) {
+        this.date_creation = date_creation;
         this.produit = produit;
         this.wpm = wpm;
         this.ci = ci;
-        this.date_creation=date_creation;
+        this.methode = methode;
+        this.plannif = plannif;
+        this.debut = debut;
+        this.fin = fin;
+        this.id=id;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getDebut() {
+        return debut;
+    }
+
+    public void setDebut(String debut) {
+        this.debut = debut;
     }
 
     public String getDate_creation() {
@@ -53,13 +89,6 @@ public class Tableau {
         this.methode = methode;
     }
 
-    public String getFC() {
-        return FC;
-    }
-
-    public void setFC(String FC) {
-        this.FC = FC;
-    }
 
     public String getPlannif() {
         return plannif;

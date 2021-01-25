@@ -193,7 +193,7 @@ public class DashBoard implements Initializable {
             String value4 = jsonObject1.optString("password");
             //Date date1=new SimpleDateFormat("dd/MM/yyyy").parse(value1);
 
-            tableau.add(new Tableau(value1,value2, value3, value4));
+            //tableau.add(new Tableau(value1,value2, value3, value4));
             //System.out.println(value1 + value2);
         }
         col_produit.setCellValueFactory(new PropertyValueFactory<>("produit"));
@@ -286,7 +286,7 @@ public class DashBoard implements Initializable {
             String value4 = jsonObject1.optString("password");
             //Date date1=new SimpleDateFormat("dd/MM/yyyy").parse(value1);
             //System.out.println(date1);
-            tableau.add(new Tableau(value1,value2, value3, value4));
+            //tableau.add(new Tableau(value1,value2, value3, value4));
             System.out.println(value1 + value2);
         }
         col_produit.setCellValueFactory(new PropertyValueFactory<>("produit"));

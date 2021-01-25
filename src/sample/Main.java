@@ -10,7 +10,8 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("NewActionWpm.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("OnBoard.fxml"));
+       root.getStylesheets().add(getClass().getResource("fullpackstyling.css").toString());
         primaryStage.setTitle("Page de connexion");
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
